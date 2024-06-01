@@ -4,6 +4,10 @@ import { store_annotations } from '../../../lib/store'
 
 interface ForwardMailBody {
   attachments?: Array<ForwardMailAttachment>
+  subject?: string,
+  to?: {
+    text?: string
+  }
 }
 
 interface ForwardMailAttachment {
@@ -20,12 +24,11 @@ export const POST: APIRoute = async ({ params, request }) => {
   const json: ForwardMailBody = await request.json();
   const attachments = json.attachments || []
   const csvattachment = attachments.find(a => a.filename && a.content && a.filename.endsWith('.csv'))
+  
+  // Get the identifier to link the data with.
+  const identifier = json.subject;
 
-  // Find a identifier to link the data with.
-  // TODO.
-  const identifier = "replaceme";
-
-  if (!csvattachment || !csvattachment.content) {
+  if (!csvattachment || !csvattachment.content || !identifier) {
     // Return 200 OK to webhook, but don't do anything.
     return new Response();
   }

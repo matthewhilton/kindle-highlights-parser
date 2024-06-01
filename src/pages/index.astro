@@ -1,11 +1,11 @@
 ---
+import ProcessTool from "../components/ProcessTool"
 import MainLayout from "../layouts/main.astro"
-import { ProcessTool } from '../components/ProcessTool'
 ---
 
 <MainLayout>
 	<h1> E-Reader CSV extractor </h1>
 	<p> Extract your annotations from your e-reader easily! </p>
 
-	<ProcessTool />
+	<ProcessTool client:load />
 </MainLayout>
