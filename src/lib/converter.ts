@@ -1,12 +1,13 @@
-import { keys } from "ts-transformer-keys";
 import type { AnnotationDataRow } from "./data";
 import { stringify } from "csv-stringify/sync";
 
 export function to_csv(annotations: Array<AnnotationDataRow>): string {
-    const header = keys<AnnotationDataRow>();
+    // TODO somehow get the keys directly from the type.
+    const header = ['text', 'color', 'page']
+
     const data = [
         header,
-        ...annotations
+        ...annotations.map(a => Object.values(a))
     ]
     return stringify(data)
 }

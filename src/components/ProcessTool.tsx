@@ -1,9 +1,7 @@
 import { create } from "zustand";
-import { useEffect } from "react"
 import {Button, type PressEvent} from 'react-aria-components';
-import { humanId } from "human-id";
-import { useQuery } from "react-query";
 import { useSessionStatus } from "../lib/hooks";
+import { resetSessionToken, sessionToken } from "../lib/stores";
 
 enum ReaderType {
     Kindle = "Kindle"
@@ -14,23 +12,29 @@ enum UploadMethod {
 }
 
 interface ToolState {
-    sessionToken: string
     readerType?: ReaderType
     uploadMethod?: UploadMethod,
     setReaderType: (t: ReaderType) => void,
     setUploadMethod: (m: UploadMethod) => void,
+    reset: () => void,
 }
 
 const useToolState = create<ToolState>((set) => ({
-    sessionToken: humanId({ capitalize: false, addAdverb: false }),
     readerType: undefined,
     uploadMethod: undefined,
     setReaderType: (t: ReaderType) => set((s) => ({ readerType: t })),
     setUploadMethod: (m: UploadMethod) => set((s) => ({ uploadMethod: m })),
+    reset: () => {
+        set({
+            readerType: undefined,
+            uploadMethod: undefined
+        })
+        resetSessionToken();
+    }
 }))
 
 export default function ProcessTool() {
-    const [readerType, uploadMethod, sessionToken] = useToolState((s) => [s.uploadMethod, s.uploadMethod, s.sessionToken]);
+    const [readerType, uploadMethod] = useToolState((s) => [s.uploadMethod, s.uploadMethod]);
     const isReadyForUpload = readerType && uploadMethod
 
     return <div>
@@ -41,16 +45,23 @@ export default function ProcessTool() {
             <UploadInstructionsStep />
             <DataCollectStep />
         </>}
+        <ResetStep />
     </div>
 }
 
+const ResetStep = () => {
+    const reset = useToolState((s) => s.reset);
+    return <Button onPress={() => reset()}> Reset </Button>
+}
+
 const UploadInstructionsStep = () => {
-    const [uploadMethod, sessionToken, readerType] = useToolState((s) => [s.uploadMethod, s.sessionToken, s.readerType]);
+    const [uploadMethod, readerType] = useToolState((s) => [s.uploadMethod, s.readerType]);
+    const token = sessionToken.get();
 
     if(uploadMethod == UploadMethod.Email && readerType == ReaderType.Kindle) {
         return <p> 
             Kindle EReader Upload Email instructions TODO
-            email to import@neonn.dev with subject {sessionToken}
+            email to import@neonn.dev with subject {token}
         </p>
     }
 
@@ -94,8 +105,8 @@ const ToggleButton = ({ pressed, text, onPress }: { pressed: boolean, text: stri
 )
 
 const DataCollectStep = () => {
-    const [sessionToken] = useToolState((s) => [s.sessionToken]);
-    const { isLoading, error, data } = useSessionStatus(sessionToken);
+    const token = sessionToken.get();
+    const { isLoading, error, data } = useSessionStatus(token);
 
     if (isLoading) {
         return <h1> Loading... </h1>
@@ -105,5 +116,9 @@ const DataCollectStep = () => {
         return <h1> Error! </h1>
     }
 
-    return <h1> Is processed: {data.dataProcessed.toString()} </h1>
+    return <div>
+        <h1> Is processed: {data.dataProcessed.toString()} </h1>
+        
+        {data.dataProcessed && <a href={`/api/session/download/${token}/annotations.csv`} download> Download CSV </a>}
+    </div>
 }
