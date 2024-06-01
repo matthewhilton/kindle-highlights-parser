@@ -38,7 +38,12 @@ const useToolState = create<ToolState>((set) => ({
 const stepBackgroundStyle: React.CSSProperties = {
     background: "#141414",
     borderRadius: 8,
-    padding: 8,
+    padding: 16,
+}
+
+const stepHeadingStyle: React.CSSProperties = {
+    margin: 0,
+    marginBottom: 10,
 }
 
 const codestyle: React.CSSProperties = {
@@ -82,10 +87,9 @@ const UploadInstructionsStep = () => {
 
     if(uploadMethod == UploadMethod.Email && readerType == ReaderType.Kindle) {
         return <div style={stepBackgroundStyle}>
-            <h1> Instructions </h1>
-            <p> 
-                Email import@neonn.dev with the subject <span style={codestyle}> {token} </span>
-            </p>
+            <h1 style={stepHeadingStyle}> Instructions </h1>
+            <p> Email import@neonn.dev with the subject: </p>
+            <span style={codestyle}> {token} </span> 
         </div>
     }
 
@@ -100,7 +104,7 @@ const SelectReaderTypeStep = () => {
     ]
 
     return <div style={stepBackgroundStyle}>
-        <h1> Select E-Reader </h1>
+        <h1 style={stepHeadingStyle}> Select E-Reader </h1>
         {
             types.map(t => <ToggleButton pressed={selectedReaderType == t} key={t} text={t} onPress={() => setReaderType(t)} icon={getReaderTypeIcon(t)} />)
         }
@@ -124,7 +128,7 @@ const SelectMethodTypeStep = () => {
     ]
 
     return <div style={stepBackgroundStyle}>
-        <h1> Select Upload Method </h1>
+        <h1 style={stepHeadingStyle}> Select Upload Method </h1>
         {
             methods.map(t => <ToggleButton pressed={methodType == t} key={t} text={t} onPress={() => setUploadMethod(t)} icon={getMethodIcon(t)} />)
         }
@@ -152,12 +156,15 @@ const baseButtonStyle: React.CSSProperties = {
     rowGap: 10,
     fontSize: "1.5em",
     borderRadius: 8,
+    outline: "none",
+    boxShadow: "none"
 }
 
 const ToggleButton = ({ pressed, text, onPress, icon }: { pressed: boolean, text: string, onPress?: (e: PressEvent) => void, icon?: React.ReactNode }) => (
     <Button style={{
         ...baseButtonStyle,
         backgroundColor: pressed ? "#1b0e3b" : "#333333", 
+        borderColor: pressed ? "#4d1dc4" : "#391691",
         borderStyle: pressed ? "solid" : "none",
     }}
     onPress={onPress}>
@@ -171,18 +178,18 @@ const DataCollectStep = () => {
     const { error, data } = useSessionStatus(token);
 
     if (error) {
-        return <h1> Error! </h1>
+        return <h1 style={stepHeadingStyle}> Error! </h1>
     }
 
     if (!data || (data && !data.dataProcessed)) {
         return <div style={{...stepBackgroundStyle, display: "flex", flexDirection: "row", alignContent: "center", alignItems: "center", columnGap: 20}}>
-            <h1> Waiting... </h1>
+            <h1 style={stepHeadingStyle}> Waiting... </h1>
             <span className="loader"></span>
         </div>
     }
 
     return <div style={stepBackgroundStyle}>
-        <h1> Download </h1>
-        <a href={`/api/session/download/${token}/annotations.csv`} download style={{...baseButtonStyle}}> <span> <Icon icon="flowbite:file-csv-outline" /> Download CSV </span> </a>
+        <h1 style={stepHeadingStyle}> Download </h1>
+        <a href={`/api/session/download/${token}/annotations.csv`} download style={{...baseButtonStyle}}> <span style={{display: "flex", flexDirection: "row", alignContent: "center", columnGap: 10}}> <Icon icon="flowbite:file-csv-outline" /> Download CSV </span> </a>
     </div>
 }
