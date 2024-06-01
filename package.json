@@ -25,5 +25,8 @@
     "swr": "^2.2.5",
     "typescript": "^5.4.5",
     "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@iconify/react": "^5.0.1"
   }
 }

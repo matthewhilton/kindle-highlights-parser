@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {Button, type PressEvent} from 'react-aria-components';
 import { useSessionStatus } from "../lib/hooks";
 import { resetSessionToken, sessionToken } from "../lib/stores";
+import { Icon } from '@iconify/react';
 
 enum ReaderType {
     Kindle = "Kindle"
@@ -11,6 +12,7 @@ enum UploadMethod {
     Email = "Email"
 }
 
+// TODO persist all this in the nanostore instead and persist into localstorage.
 interface ToolState {
     readerType?: ReaderType
     uploadMethod?: UploadMethod,
@@ -33,11 +35,28 @@ const useToolState = create<ToolState>((set) => ({
     }
 }))
 
+const stepBackgroundStyle: React.CSSProperties = {
+    background: "#141414",
+    borderRadius: 8,
+    padding: 8,
+}
+
+const codestyle: React.CSSProperties = {
+    padding: 6,
+    backgroundColor: "#241e2e",
+    borderRadius: 4,
+    fontWeight: "bold"
+}
+
 export default function ProcessTool() {
     const [readerType, uploadMethod] = useToolState((s) => [s.uploadMethod, s.uploadMethod]);
     const isReadyForUpload = readerType && uploadMethod
 
-    return <div>
+    return <div style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: 10,
+    }}>
         <SelectReaderTypeStep />
         <SelectMethodTypeStep />
 
@@ -51,7 +70,10 @@ export default function ProcessTool() {
 
 const ResetStep = () => {
     const reset = useToolState((s) => s.reset);
-    return <Button onPress={() => reset()}> Reset </Button>
+    return <Button 
+    style={{...baseButtonStyle, backgroundColor: "#2e1118"}}
+    onPress={() => reset()}
+    > Reset </Button>
 }
 
 const UploadInstructionsStep = () => {
@@ -59,10 +81,12 @@ const UploadInstructionsStep = () => {
     const token = sessionToken.get();
 
     if(uploadMethod == UploadMethod.Email && readerType == ReaderType.Kindle) {
-        return <p> 
-            Kindle EReader Upload Email instructions TODO
-            email to import@neonn.dev with subject {token}
-        </p>
+        return <div style={stepBackgroundStyle}>
+            <h1> Instructions </h1>
+            <p> 
+                Email import@neonn.dev with the subject <span style={codestyle}> {token} </span>
+            </p>
+        </div>
     }
 
     return null;
@@ -75,12 +99,21 @@ const SelectReaderTypeStep = () => {
         ReaderType.Kindle
     ]
 
-    return <div>
+    return <div style={stepBackgroundStyle}>
         <h1> Select E-Reader </h1>
         {
-            types.map(t => <ToggleButton pressed={selectedReaderType == t} key={t} text={t} onPress={() => setReaderType(t)} />)
+            types.map(t => <ToggleButton pressed={selectedReaderType == t} key={t} text={t} onPress={() => setReaderType(t)} icon={getReaderTypeIcon(t)} />)
         }
     </div>
+}
+
+const getReaderTypeIcon = (type: ReaderType): React.ReactNode => {
+    switch(type) {
+        case ReaderType.Kindle:
+            return <Icon icon={"uil:amazon"} />
+        default:
+            return <Icon icon={"carbon:unknown"} />
+    }
 }
 
 const SelectMethodTypeStep = () => {
@@ -90,35 +123,66 @@ const SelectMethodTypeStep = () => {
         UploadMethod.Email
     ]
 
-    return <div>
+    return <div style={stepBackgroundStyle}>
         <h1> Select Upload Method </h1>
         {
-            methods.map(t => <ToggleButton pressed={methodType == t} key={t} text={t} onPress={() => setUploadMethod(t)} />)
+            methods.map(t => <ToggleButton pressed={methodType == t} key={t} text={t} onPress={() => setUploadMethod(t)} icon={getMethodIcon(t)} />)
         }
     </div>
 }
 
-const ToggleButton = ({ pressed, text, onPress }: { pressed: boolean, text: string, onPress?: (e: PressEvent) => void }) => (
-    <div style={{backgroundColor: pressed ? "red" : "white", padding: 20}}>
-        <Button onPress={onPress}> {text} </Button>
-    </div>
+const getMethodIcon = (method: UploadMethod): React.ReactNode => {
+    switch(method) {
+        case UploadMethod.Email:
+            return <Icon icon={"carbon:email"} />
+        default:
+            return <Icon icon={"carbon:unknown"} />
+    }
+}
+
+const baseButtonStyle: React.CSSProperties = {
+    borderColor: "#391691",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "white",
+    padding: "1em",
+    border: 4,
+    rowGap: 10,
+    fontSize: "1.5em",
+    borderRadius: 8,
+}
+
+const ToggleButton = ({ pressed, text, onPress, icon }: { pressed: boolean, text: string, onPress?: (e: PressEvent) => void, icon?: React.ReactNode }) => (
+    <Button style={{
+        ...baseButtonStyle,
+        backgroundColor: pressed ? "#1b0e3b" : "#333333", 
+        borderStyle: pressed ? "solid" : "none",
+    }}
+    onPress={onPress}>
+        {icon}
+        {text}
+    </Button>
 )
 
 const DataCollectStep = () => {
     const token = sessionToken.get();
-    const { isLoading, error, data } = useSessionStatus(token);
+    const { error, data } = useSessionStatus(token);
 
-    if (isLoading) {
-        return <h1> Loading... </h1>
-    }
-
-    if (error || !data) {
+    if (error) {
         return <h1> Error! </h1>
     }
 
-    return <div>
-        <h1> Is processed: {data.dataProcessed.toString()} </h1>
-        
-        {data.dataProcessed && <a href={`/api/session/download/${token}/annotations.csv`} download> Download CSV </a>}
+    if (!data || (data && !data.dataProcessed)) {
+        return <div style={{...stepBackgroundStyle, display: "flex", flexDirection: "row", alignContent: "center", alignItems: "center", columnGap: 20}}>
+            <h1> Waiting... </h1>
+            <span className="loader"></span>
+        </div>
+    }
+
+    return <div style={stepBackgroundStyle}>
+        <h1> Download </h1>
+        <a href={`/api/session/download/${token}/annotations.csv`} download style={{...baseButtonStyle}}> <span> <Icon icon="flowbite:file-csv-outline" /> Download CSV </span> </a>
     </div>
 }

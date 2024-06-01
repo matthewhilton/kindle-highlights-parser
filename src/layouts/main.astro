@@ -11,9 +11,73 @@
             font-optical-sizing: auto;
             font-style: normal;
         }
+
+        /* From https://cssloaders.github.io/ */
+        .loader {
+          width: 48px;
+          height: 48px;
+          display: inline-block;
+          position: relative;
+        }
+        .loader::after,
+        .loader::before {
+          content: '';  
+          box-sizing: border-box;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          border: 2px solid #FFF;
+          position: absolute;
+          left: 0;
+          top: 0;
+          animation: animloader 2s linear infinite;
+        }
+        .loader::after {
+          animation-delay: 1s;
+        }
+
+        @keyframes animloader {
+          0% {
+            transform: scale(0);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 0;
+          }
+        }
+
     </style>
+      <style>
+        body, div {
+          background-color: black;
+          color: white;
+        }
+
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        main {
+          max-width: 500px;
+          width: 100%;
+          justify-self: center;
+          margin-top: 50px;
+        }
+
+        @media (width <= 500px) {
+          main {
+            max-width: 100%;
+            margin: 4px;
+          }
+        }
+      </style>
   </head>
   <body>
-    <slot />
+    <main>
+      <slot />
+    </main>
   </body>
 </html>
