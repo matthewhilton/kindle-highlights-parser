@@ -5,6 +5,8 @@ import { resetSessionToken, sessionToken } from "../lib/stores";
 import CSVIcon from "../images/fa6-solid--file-csv.svg"
 import KindleIcon from "../images/uil--amazon.svg"
 import EmailIcon from "../images/eva--email-outline.svg"
+import KindleAnnotationsOpenImage from "../images/annotations-button.png"
+import KindleAnnotationsShareImage from "../images/annotations-share.png"
 
 enum ReaderType {
     Kindle = "Kindle"
@@ -67,9 +69,17 @@ const UploadInstructionsStep = () => {
 
     if(uploadMethod == UploadMethod.Email && readerType == ReaderType.Kindle) {
         return <div className="rounded-lg bg-neutral-100 p-4">
-            <h1 className="font-semibold mb-3 text-lg"> Instructions </h1>
+            <h1 className="font-semibold mb-3 text-xl"> Instructions </h1>
+            <h2 className="font-medium"> Physical Kindle Reader </h2>
             <div className="flex-inline">
-                <p> Email import@neonn.dev with the subject: <span className="font-bold"> {token} </span> </p>
+                <ol className="list-decimal list-inside"> 
+                    <li> Open the annotations for your book </li>
+                    <img src={KindleAnnotationsOpenImage.src} alt="Open annotations button" className="h-24" /> 
+                    <li> Press share </li>
+                    <img src={KindleAnnotationsShareImage.src} alt="Share button" className="h-24" /> 
+                    <li> Press yes when prompted to send the annotations to your Amazon account's email address </li>
+                    <li> Forward the email you receive to <span className="font-bold"> import@neonn.dev </span> with the subject <span className="font-bold"> {token} </span> </li>
+                </ol>
             </div>
         </div>
     }
@@ -127,7 +137,7 @@ const getMethodIcon = (method: UploadMethod): React.ReactNode => {
 
 const ToggleButton = ({ pressed, text, onPress, icon }: { pressed: boolean, text: string, onPress?: (e: PressEvent) => void, icon?: React.ReactNode }) => (
     <Button 
-    className={"rounded-md p-4 flex flex-col items-center justify-center focus:outline-none " + (!pressed ? "bg-neutral-200" : "bg-orange-300")}
+    className={"rounded-md p-4 flex flex-col items-center w-max max-w-24 justify-center focus:outline-none " + (!pressed ? "bg-neutral-200" : "bg-orange-300")}
     aria-pressed={pressed}
     onPress={onPress}>
         {icon}
