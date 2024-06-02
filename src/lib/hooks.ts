@@ -4,11 +4,11 @@ import useSWR from "swr"
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
 export const useSessionStatus = (sessionToken: string) => useSWR<SessionStatus>(`/api/session/${sessionToken}`, fetcher, { refreshInterval(latestData) {
-    // 20 seconds if already processed. Unlikely to change.
+    // 30 seconds if already processed. Unlikely to change.
     if (latestData && latestData.dataProcessed) {
-        return 20000;
+        return 30000;
     }
 
-    // 3 seconds when not processed.
-    return 3000;
-}, revalidateOnFocus: false })
+    // 10 seconds when not processed.
+    return 10000;
+}, revalidateOnFocus: true })
