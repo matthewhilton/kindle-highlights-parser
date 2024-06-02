@@ -1,0 +1,11 @@
+<div class="rounded-md">
+    <a href={Astro.props.href}>
+        <div class="inline-flex items-center gap-3 max-w-20 text-lg">
+            <slot name="logo" />
+            <div class="text-xl font-bold">
+                <slot name="heading" />
+            </div>
+        </div>
+        <slot name="description" />
+    </a>
+</div>

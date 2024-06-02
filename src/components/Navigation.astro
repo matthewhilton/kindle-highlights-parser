@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets"
+import GithubIcon from "../images/fe--github.svg"
+---
+
+<section class="bg-white border-b border-black/5">
+    <div class="w-full mx-auto md:px-12 px-8 max-w-7xl lg:px-16">
+      <div
+        x-data="{ open: false }"
+        class="relative flex flex-col w-full py-5 mx-auto bg-white md:items-center md:justify-between md:flex-row md:px-6">
+        <div class="flex flex-row items-center justify-between lg:justify-start">
+          <slot name="logo" />
+        </div>
+        <nav
+          :class="{'flex': open, 'hidden': !open}"
+          class="flex-col items-center flex-grow hidden md:pb-0 md:flex md:justify-end md:flex-row">
+          <div class="inline-flex items-center gap-2 list-none lg:ml-auto">
+            <a
+              href="https://github.com/matthewhilton/kindle-highlights-parser"
+              class="inline-flex items-center h-8 justify-center gap-x-2 px-4 py-2 text-sm font-medium text-black bg-gray-100 rounded-lg group focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-gray-50 active:bg-gray-200 active:text-accent-400 focus-visible:outline-black">
+              <Image src={GithubIcon} alt="Github" />
+              View on Github
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </section>

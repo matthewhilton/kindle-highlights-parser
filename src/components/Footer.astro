@@ -1,0 +1,44 @@
+---
+import Company from "./Company.astro";
+---
+
+<footer>
+    <div
+      class="mx-auto w-full lg:px-24 max-w-7xl md:px-12 items-center px-8 py-24"
+    >
+      <div class="grid grid-cols-2 lg:grid-cols-4 items-start gap-x-8 gap-y-24 ">
+        <Company />
+        <div class="md:grid md:grid-cols-2 xl:grid-cols-4 md:gap-8 text-sm text-gray-400 lg:col-span-3">
+          <div>
+            <h3 class="text-lg text-black font-medium tracking-tight">
+              Tools
+            </h3>
+            <ul role="list" class="mt-4 space-y-1">
+              <li>
+                <a href="/annotations" class=" hover:text-black">
+                  E-Reader Annotations Extractor
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg text-black font-medium tracking-tight">
+              About
+            </h3>
+            <ul role="list" class="mt-4 space-y-1">
+              <li>
+                <a href="https://github.com/matthewhilton/kindle-highlights-parser" class=" hover:text-black">
+                  View on Github
+                </a>
+              </li>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </footer>
+  <footer class="bg-white">
+    <div class="mx-auto w-full lg:px-24 max-w-7xl md:px-12 items-center px-8 py-6 ">
+      <div class="border-t pt-6">
+      </div>
+    </div>
+  </footer>

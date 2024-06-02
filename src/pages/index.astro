@@ -1,11 +1,42 @@
 ---
-import ProcessTool from "../components/ProcessTool"
+import { Image } from "astro:assets"
+import Company from "../components/Company.astro"
 import MainLayout from "../layouts/main.astro"
+import IconText from "../components/IconText.astro"
+import OkIcon from "../images/streamline--ok-hand.svg"
+import ToolsIcon from "../images/tabler--tools.svg"
+import OpenIcon from "../images/ri--door-open-line.svg"
+import AnnotationsAppButton from "../components/apps/AnnotationsAppButton.astro"
 ---
-
 <MainLayout>
-	<h1> E-Reader CSV extractor </h1>
-	<p> Extract your annotations from your e-reader easily! </p>
+	<Company slot="logo" />
+	<div>
+		<div class="mb-32">
+			<h1 class="text-4xl font-bold"> Tools for your language learning </h1>
+		</div>
 
-	<ProcessTool client:load />
+		<div class="mb-32">
+			<h1 class="text-xl mb-4"> Our tools: </h1>
+			<AnnotationsAppButton />
+		</div>
+
+		<div class="flex flex-col gap-y-4">
+			<h2 class="font-bold"> Our Philosophy </h2>
+			<IconText>
+				<Image src={ToolsIcon} alt="Tools" slot="icon" width="25" height="25" />
+				<p slot="text"> Make it useful </p>
+				<p slot="desc"> Save time doing tedious tasks. </p>
+			</IconText>
+			<IconText>
+				<Image src={OkIcon} alt="Ok hand" slot="icon" width="25" height="25" />
+				<p slot="text"> Keep it simple </p>
+				<p slot="desc"> Exportable data wherever possible with tools that work together seamlessly. </p>
+			</IconText>
+			<IconText>
+				<Image src={OpenIcon} alt="Open door" slot="icon" width="25" height="25" />
+				<p slot="text"> Open </p>
+				<p slot="desc"> Open source, data is stored only when necessary and deleted when not needed. </p>
+			</IconText>
+		</div>
+	</div>
 </MainLayout>

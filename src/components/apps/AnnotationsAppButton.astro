@@ -1,0 +1,11 @@
+---
+import { Image } from "astro:assets";
+import AppButton from "../AppButton.astro";
+import AnnotationsLogo from "../../images/annotations.svg";
+---
+
+<AppButton href="/annotations" >
+    <Image src={AnnotationsLogo} alt="Annotations service logo" slot="logo" width="50" height={"50"} />
+    <h1 slot="heading"> Annotations </h1>
+    <p slot="description"> Extract and clean your E-Reader annotations/highlights, export as CSV file </p>
+</AppButton>

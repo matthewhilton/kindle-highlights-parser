@@ -3,6 +3,9 @@ import {Button, type PressEvent} from 'react-aria-components';
 import { useSessionStatus } from "../lib/hooks";
 import { resetSessionToken, sessionToken } from "../lib/stores";
 import { Icon } from '@iconify/react';
+import CSVIcon from "../images/fa6-solid--file-csv.svg"
+import KindleIcon from "../images/uil--amazon.svg"
+import EmailIcon from "../images/eva--email-outline.svg"
 
 enum ReaderType {
     Kindle = "Kindle"
@@ -35,33 +38,11 @@ const useToolState = create<ToolState>((set) => ({
     }
 }))
 
-const stepBackgroundStyle: React.CSSProperties = {
-    background: "#141414",
-    borderRadius: 8,
-    padding: 16,
-}
-
-const stepHeadingStyle: React.CSSProperties = {
-    margin: 0,
-    marginBottom: 10,
-}
-
-const codestyle: React.CSSProperties = {
-    padding: 6,
-    backgroundColor: "#241e2e",
-    borderRadius: 4,
-    fontWeight: "bold"
-}
-
 export default function ProcessTool() {
     const [readerType, uploadMethod] = useToolState((s) => [s.uploadMethod, s.uploadMethod]);
     const isReadyForUpload = readerType && uploadMethod
 
-    return <div style={{
-        display: "flex",
-        flexDirection: "column",
-        rowGap: 10,
-    }}>
+    return <div className="flex flex-col gap-y-4">
         <SelectReaderTypeStep />
         <SelectMethodTypeStep />
 
@@ -75,8 +56,8 @@ export default function ProcessTool() {
 
 const ResetStep = () => {
     const reset = useToolState((s) => s.reset);
-    return <Button 
-    style={{...baseButtonStyle, backgroundColor: "#2e1118"}}
+    return <Button
+    className="bg-red-500 rounded-lg p-4"
     onPress={() => reset()}
     > Reset </Button>
 }
@@ -86,10 +67,11 @@ const UploadInstructionsStep = () => {
     const token = sessionToken.get();
 
     if(uploadMethod == UploadMethod.Email && readerType == ReaderType.Kindle) {
-        return <div style={stepBackgroundStyle}>
-            <h1 style={stepHeadingStyle}> Instructions </h1>
-            <p> Email import@neonn.dev with the subject: </p>
-            <span style={codestyle}> {token} </span> 
+        return <div className="rounded-lg bg-neutral-100 p-4">
+            <h1 className="font-semibold mb-3 text-lg"> Instructions </h1>
+            <div className="flex-inline">
+                <p> Email import@neonn.dev with the subject: <span className="font-bold"> {token} </span> </p>
+            </div>
         </div>
     }
 
@@ -103,8 +85,8 @@ const SelectReaderTypeStep = () => {
         ReaderType.Kindle
     ]
 
-    return <div style={stepBackgroundStyle}>
-        <h1 style={stepHeadingStyle}> Select E-Reader </h1>
+    return <div className="rounded-lg bg-neutral-100 p-4">
+        <h1 className="font-semibold mb-3 text-lg"> Select E-Reader </h1>
         {
             types.map(t => <ToggleButton pressed={selectedReaderType == t} key={t} text={t} onPress={() => setReaderType(t)} icon={getReaderTypeIcon(t)} />)
         }
@@ -114,9 +96,9 @@ const SelectReaderTypeStep = () => {
 const getReaderTypeIcon = (type: ReaderType): React.ReactNode => {
     switch(type) {
         case ReaderType.Kindle:
-            return <Icon icon={"uil:amazon"} />
+            return <img src={KindleIcon.src} alt="Kindle icon" />
         default:
-            return <Icon icon={"carbon:unknown"} />
+            return <></>
     }
 }
 
@@ -127,8 +109,8 @@ const SelectMethodTypeStep = () => {
         UploadMethod.Email
     ]
 
-    return <div style={stepBackgroundStyle}>
-        <h1 style={stepHeadingStyle}> Select Upload Method </h1>
+    return <div className="rounded-lg bg-neutral-100 p-4">
+        <h1 className="font-semibold mb-3 text-lg"> Select Upload Method </h1>
         {
             methods.map(t => <ToggleButton pressed={methodType == t} key={t} text={t} onPress={() => setUploadMethod(t)} icon={getMethodIcon(t)} />)
         }
@@ -138,35 +120,16 @@ const SelectMethodTypeStep = () => {
 const getMethodIcon = (method: UploadMethod): React.ReactNode => {
     switch(method) {
         case UploadMethod.Email:
-            return <Icon icon={"carbon:email"} />
+            return <img src={EmailIcon.src} />
         default:
-            return <Icon icon={"carbon:unknown"} />
+            return <></>
     }
 }
 
-const baseButtonStyle: React.CSSProperties = {
-    borderColor: "#391691",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "white",
-    padding: "1em",
-    border: 4,
-    rowGap: 10,
-    fontSize: "1.5em",
-    borderRadius: 8,
-    outline: "none",
-    boxShadow: "none"
-}
-
 const ToggleButton = ({ pressed, text, onPress, icon }: { pressed: boolean, text: string, onPress?: (e: PressEvent) => void, icon?: React.ReactNode }) => (
-    <Button style={{
-        ...baseButtonStyle,
-        backgroundColor: pressed ? "#1b0e3b" : "#333333", 
-        borderColor: pressed ? "#4d1dc4" : "#391691",
-        borderStyle: pressed ? "solid" : "none",
-    }}
+    <Button 
+    className={"rounded-md p-4 flex flex-col items-center justify-center focus:outline-none " + (!pressed ? "bg-neutral-200" : "bg-orange-300")}
+    aria-pressed={pressed}
     onPress={onPress}>
         {icon}
         {text}
@@ -178,18 +141,19 @@ const DataCollectStep = () => {
     const { error, data } = useSessionStatus(token);
 
     if (error) {
-        return <h1 style={stepHeadingStyle}> Error! </h1>
-    }
-
-    if (!data || (data && !data.dataProcessed)) {
-        return <div style={{...stepBackgroundStyle, display: "flex", flexDirection: "row", alignContent: "center", alignItems: "center", columnGap: 20}}>
-            <h1 style={stepHeadingStyle}> Waiting... </h1>
-            <span className="loader"></span>
+        return <div className="rounded-lg bg-neutral-100 p-4">
+            <h1 className="font-semibold mb-3 text-lg"> Error! </h1>
         </div>
     }
 
-    return <div style={stepBackgroundStyle}>
-        <h1 style={stepHeadingStyle}> Download </h1>
-        <a href={`/api/session/download/${token}/annotations.csv`} download style={{...baseButtonStyle}}> <span style={{display: "flex", flexDirection: "row", alignContent: "center", columnGap: 10}}> <Icon icon="flowbite:file-csv-outline" /> Download CSV </span> </a>
+    if (!data || (data && !data.dataProcessed)) {
+        return <div className="rounded-lg bg-neutral-100 p-4">
+            <h1 className="font-semibold mb-3 text-lg"> Waiting... </h1>
+        </div>
+    }
+
+    return <div className="rounded-lg bg-neutral-100 p-4">
+        <h1 className="font-semibold mb-3 text-lg"> Download </h1>
+        <a href={`/api/session/download/${token}/annotations.csv`} download> <span style={{display: "flex", flexDirection: "row", alignContent: "center", columnGap: 10}}> <img src={CSVIcon.src} /> Download CSV </span> </a>
     </div>
 }

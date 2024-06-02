@@ -1,83 +1,20 @@
+---
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+---
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style is:global>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
-    
-        body {
-            font-family: "Rubik", sans-serif;
-            font-optical-sizing: auto;
-            font-style: normal;
-        }
-
-        /* From https://cssloaders.github.io/ */
-        .loader {
-          width: 48px;
-          height: 48px;
-          display: inline-block;
-          position: relative;
-        }
-        .loader::after,
-        .loader::before {
-          content: '';  
-          box-sizing: border-box;
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          border: 2px solid #FFF;
-          position: absolute;
-          left: 0;
-          top: 0;
-          animation: animloader 2s linear infinite;
-        }
-        .loader::after {
-          animation-delay: 1s;
-        }
-
-        @keyframes animloader {
-          0% {
-            transform: scale(0);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 0;
-          }
-        }
-
-    </style>
-      <style>
-        body, div {
-          background-color: black;
-          color: white;
-        }
-
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          max-width: 500px;
-          width: 100%;
-          justify-self: center;
-          margin-top: 50px;
-        }
-
-        @media (width <= 500px) {
-          main {
-            max-width: 100%;
-            margin: 4px;
-          }
-        }
-      </style>
   </head>
   <body>
-    <main>
+    <Navigation>
+      <slot name="logo" slot="logo" />
+    </Navigation>
+    <main class="mx-auto w-full lg:px-24 max-w-7xl md:px-12 items-center px-8 py-16">
       <slot />
     </main>
+    <Footer />
   </body>
 </html>
