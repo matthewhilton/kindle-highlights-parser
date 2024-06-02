@@ -1,8 +1,10 @@
 import { parse } from 'csv-parse';
+import { parse as parse_html } from 'node-html-parser'
 
-enum AnnotationColor {
-    Yellow,
-    Unknown
+export enum AnnotationColor {
+    Yellow = 'yellow',
+    Orange = 'orange',
+    Unknown = 'unknown'
 }
 
 export interface AnnotationDataRow {
@@ -14,6 +16,47 @@ export interface AnnotationDataRow {
 enum CsvType {
     Kindle,
     Unknown
+}
+
+export function parse_utf8_buffer(data: Array<any>): string {
+    const buffer = Uint8Array.from(data);
+    const decoder = new TextDecoder('UTF-8');
+    const text = decoder.decode(buffer);
+    return text;
+}
+
+export function parse_annotations_from_html(html_text: string): AnnotationDataRow[] {
+    const root = parse_html(html_text);
+    const headings = root.querySelectorAll(".noteHeading");
+    const data = headings.map(heading => {
+        const colorEl = heading.querySelector("[class^=highlight]")
+
+        if (!colorEl) {
+            return
+        }
+
+        const color = kindle_extract_color(colorEl.innerText);
+        const page = kindle_extract_page(heading.innerText);
+
+        const content = heading.nextElementSibling
+
+        if (!content) {
+            return;
+        }
+
+        const row: AnnotationDataRow = {
+            text: content.innerText.trim(),
+            color,
+            page
+        }
+
+        return row;
+    });
+
+    // Filter out any broken ones and return
+    const res = data.filter((d): d is AnnotationDataRow => d != null);
+
+    return res;
 }
 
 export async function parse_annotation_from_csv(csv_text: string): Promise<AnnotationDataRow[]> {
@@ -53,20 +96,51 @@ function parse_kindle_annotations(rows: Array<any>): Array<AnnotationDataRow> {
 }
 
 function kindle_extract_page(text: string): Number {
-    text = text.replace('Page ', '');
-    return parseInt(text)
+    // Must contain the string Page x, so must be at least 5 chars long.
+    if (text.length < 5) {
+        return -1;
+    }
+
+    // Find index of the word 'Page' in the text.
+    const pageWordIndex = text.indexOf('Page')
+
+    if (pageWordIndex == -1) {
+        return -1;
+    }
+
+    // Split the substring after the 'Page' and split by space
+    // to hopefully get the number.
+    const number_part = text.substring(pageWordIndex + 4).split(' ')
+
+    if (number_part.length == 0) {
+        return -1;
+    }
+
+    const num = parseInt(number_part[1])
+
+    return !Number.isNaN(num) ? num : -1;
 }
+
+interface AnnotationColorObject {
+    [index: string]: AnnotationColor;
+  }
 
 function kindle_extract_color(text: string): AnnotationColor {
     const betweenBrackets = text.match(/Highlight \((.*)\)/)?.pop()
 
-    if (betweenBrackets === 'Yellow') {
-        return AnnotationColor.Yellow;
+    // TODO rest of colours.
+    const to_check: AnnotationColorObject = {
+        'Yellow': AnnotationColor.Yellow,
+        'Orange': AnnotationColor.Orange
     }
 
-    // TODO rest of colours.
+    const matchedColorText = Object.keys(to_check).find(test_val => {
+        const matchesBrackets = (betweenBrackets && betweenBrackets.toLowerCase() == test_val.toLowerCase());
+        const matchesDirect = text.toLowerCase() == test_val.toLowerCase();
+        return matchesBrackets || matchesDirect;
+    })
 
-    return AnnotationColor.Unknown;
+    return to_check[matchedColorText || ''] || AnnotationColor.Unknown;
 }
 
 function determine_file_type(rows: Array<any>): CsvType {

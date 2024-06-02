@@ -25,6 +25,7 @@
     "csv-stringify": "^6.5.0",
     "human-id": "^4.1.1",
     "nanostores": "^0.10.3",
+    "node-html-parser": "^6.1.13",
     "react-aria-components": "^1.2.1",
     "react-hook-form": "^7.51.5",
     "react-query": "^3.39.3",

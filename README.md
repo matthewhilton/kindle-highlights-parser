@@ -45,3 +45,9 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+
+## 
+
+Known issues
+- Kindle HTML in language other than English - HTML is formatted based on devices language setting, but we expect English.
