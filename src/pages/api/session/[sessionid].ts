@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { annotations_exist } from "../../../lib/store";
 
-export const GET: APIRoute = async ({params, request}) => {
+export const GET: APIRoute = async ({params}) => {
     // This is part of the route, so always exists.
     const sessionToken = params.sessionid!;
 

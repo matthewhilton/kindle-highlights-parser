@@ -6,7 +6,7 @@ enum AnnotationColor {
 }
 
 export interface AnnotationDataRow {
-    text: String,
+    text: string,
     color: AnnotationColor,
     page: Number
 }
@@ -16,7 +16,7 @@ enum CsvType {
     Unknown
 }
 
-export async function parse_annotation_from_csv(csv_text: String): Promise<AnnotationDataRow[]> {
+export async function parse_annotation_from_csv(csv_text: string): Promise<AnnotationDataRow[]> {
     return new Promise((resolve) => {
         parse(csv_text, { relax_quotes: true }, (err, rows) => {
             if(err) {
@@ -90,8 +90,4 @@ function is_kindle_file(rows: Array<any>): boolean {
 
     // The first row header should be Annotation Type.
     return rows[7][0] == 'Annotation Type'
-}
-
-export function persist_loaded_data(data: StoredAnnotationData) {
-    // TODO.
 }

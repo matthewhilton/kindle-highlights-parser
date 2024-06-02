@@ -2,7 +2,6 @@ import { create } from "zustand";
 import {Button, type PressEvent} from 'react-aria-components';
 import { useSessionStatus } from "../lib/hooks";
 import { resetSessionToken, sessionToken } from "../lib/stores";
-import { Icon } from '@iconify/react';
 import CSVIcon from "../images/fa6-solid--file-csv.svg"
 import KindleIcon from "../images/uil--amazon.svg"
 import EmailIcon from "../images/eva--email-outline.svg"
@@ -27,8 +26,8 @@ interface ToolState {
 const useToolState = create<ToolState>((set) => ({
     readerType: undefined,
     uploadMethod: undefined,
-    setReaderType: (t: ReaderType) => set((s) => ({ readerType: t })),
-    setUploadMethod: (m: UploadMethod) => set((s) => ({ uploadMethod: m })),
+    setReaderType: (t: ReaderType) => set(() => ({ readerType: t })),
+    setUploadMethod: (m: UploadMethod) => set(() => ({ uploadMethod: m })),
     reset: () => {
         set({
             readerType: undefined,

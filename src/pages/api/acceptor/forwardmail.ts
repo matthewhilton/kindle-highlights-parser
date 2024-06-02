@@ -19,7 +19,7 @@ interface ForwardMailAttachmentBuffer {
  data: Array<number>
 }
 
-export const POST: APIRoute = async ({ params, request }) => {
+export const POST: APIRoute = async ({ request }) => {
   // Extract the .csv attachment.
   const json: ForwardMailBody = await request.json();
   const attachments = json.attachments || []
