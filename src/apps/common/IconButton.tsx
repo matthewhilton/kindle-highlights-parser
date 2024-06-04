@@ -7,6 +7,9 @@ interface Props {
     text: string
 }
 
+/**
+ * Square looking button that also has an icon.
+ */
 export default function IconButton({ pressed, onPress, iconSrc, text }: Props) {
     return (
         <Button 

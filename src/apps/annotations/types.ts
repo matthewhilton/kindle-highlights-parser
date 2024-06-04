@@ -1,3 +1,6 @@
+/**
+ * Types for the annotations application
+ */
 export interface Selection {
     type?: ReaderType,
     method?: UploadMethod
@@ -9,6 +12,23 @@ export enum ReaderType {
 
 export enum UploadMethod {
     Email = "Email"
+}
+
+export enum CsvType {
+    Kindle,
+    Unknown
+}
+
+export enum AnnotationColor {
+    Yellow = 'yellow',
+    Orange = 'orange',
+    Unknown = 'unknown'
+}
+
+export interface AnnotationDataRow {
+    text: string,
+    color: AnnotationColor,
+    page: Number
 }
 
 export interface AnnotationsAppConfig {
@@ -32,4 +52,5 @@ export interface ReaderConfigOption {
 export type AnnotationsAppState = {
     selection: Selection,
     uploadIdentifier?: string
+    uploadAccessKey?: string
 }

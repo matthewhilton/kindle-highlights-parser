@@ -3,7 +3,15 @@ import KindleAnnotationsOpenImage from "../../images/annotations-button.png"
 import KindleAnnotationsShareImage from "../../images/annotations-share.png"
 import BoxWithHeading from "../common/BoxWithHeading";
 
-export default function MethodInstructions({ selection, uploadIdentifier }: { selection: Selection, uploadIdentifier?: string }) {
+interface Props { 
+    selection: Selection, 
+    uploadIdentifier?: string
+}
+
+/**
+ * Display instructions based on the given selection, inserting the uploadIdentifier where needed.
+ */
+export default function MethodInstructions({ selection, uploadIdentifier }: Props) {
     const instructionsElements = getInstructions(selection, uploadIdentifier);
     return <BoxWithHeading heading = "Instructions">
         {instructionsElements}
