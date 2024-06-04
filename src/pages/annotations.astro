@@ -3,6 +3,7 @@ import ProcessTool from "../components/ProcessTool"
 import MainLayout from "../layouts/main.astro"
 import AnnotationsAppButton from "../components/apps/AnnotationsAppButton.astro";
 import Company from "../components/Company.astro";
+import AnnotationsApp from "../apps/annotations/AnnotationsApp";
 ---
 <MainLayout>
     <title> Annotations | Neonn language tools </title>
@@ -10,5 +11,6 @@ import Company from "../components/Company.astro";
     <div class="mb-4">
         <AnnotationsAppButton />
     </div>
-	<ProcessTool client:load />
+    <AnnotationsApp client:only="react" />
+	
 </MainLayout>

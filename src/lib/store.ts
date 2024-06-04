@@ -25,3 +25,8 @@ export async function get_annotations(sessionIdentifier: string): Promise<Array<
     const redis = get_redis();
     return await redis.get(sessionIdentifier) || [];
 }
+
+export async function is_key_used(key: string): Promise<boolean> {
+    const redis = get_redis();
+    return await redis.exists(key) == 1;
+}
