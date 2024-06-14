@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
-import { parse_annotation_from_csv, parse_annotations_from_html, parse_utf8_buffer, type AnnotationDataRow } from '../../../lib/data'
-import { store_annotations } from '../../../lib/store'
+import { store_annotations } from '../../../backend/annotations/data'
+import { parse_annotation_from_csv, parse_annotations_from_html, parse_utf8_buffer } from '../../../backend/annotations/parsing'
+import type { AnnotationDataRow } from '../../../apps/annotations/types'
 
 interface ForwardMailBody {
   attachments?: Array<ForwardMailAttachment>
@@ -57,9 +58,6 @@ const parseData = async (type: AttachmentType, file: ForwardMailAttachment): Pro
     case AttachmentType.HTMLFromMobileKindle:
       return parse_annotations_from_html(parse_utf8_buffer(file.content?.data || []))
   }
-
-  // No match, return nothing.
-  return [];
 }
 
 export const POST: APIRoute = async ({ request }) => {
