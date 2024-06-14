@@ -1,5 +1,7 @@
 import BoxWithHeading from "../common/BoxWithHeading";
 import { useUploadStatus } from "./hooks";
+import DownloadFileIcon from "../../images/ci--file-download.svg"
+import LoadingIcon from "../../images/eos-icons--loading.svg"
 
 interface Props {
     uploadIdentifier: string,
@@ -21,7 +23,7 @@ const UploadStatusInformationInternal = ({ uploadIdentifier, uploadAccessKey }: 
     const { isLoading, error, data } = useUploadStatus(uploadIdentifier, uploadAccessKey);
 
     if(isLoading || !data || (data && !data.annotationsExist)) {
-        return <h1> Waiting... </h1>
+        return <span className="flex flex-row gap-2"> <img src={LoadingIcon.src} /> <h1> Waiting... </h1> </span>
     }
 
     if (error) {
@@ -29,7 +31,7 @@ const UploadStatusInformationInternal = ({ uploadIdentifier, uploadAccessKey }: 
     }
 
     if (data.annotationsExist) {
-        return <a href={`/api/annotations/download/${uploadIdentifier}.csv?key=${uploadAccessKey}`} download> Download </a>
+        return <a href={`/api/annotations/download/${uploadIdentifier}.csv?key=${uploadAccessKey}`} download> <span className="flex flex-row gap-2"> <img src={DownloadFileIcon.src} /> Download </span> </a>
     }
 
     return null;
